@@ -16,18 +16,19 @@ s = Node()    # for leaders in 2nd pass. It stands for the current source vertex
 
 
 def get_input(filename):
-    graph_map = {}
+    graph_map = []
 
     for line in open(filename, 'r').readlines():
         values = [int(val) for val in line.split()]
         key = values.pop(0)
-        if key in graph_map and node is not None:
+        if Node in graph_map:
+            print("asd")
             node.value.extend(values)
         else:
             node = Node()
             node.key = key
             node.value = values
-            graph_map[key] = node
+            graph_map.append(node)
         #print(key, node.value)
     return graph_map
 
@@ -61,6 +62,7 @@ def kosaraju(graph_map):
     print(graph_map_rev)
 
 graph_map = get_input("test1.txt")
-DFS_Loop(graph_map)
-print(t)
-print(kosaraju(graph_map))
+#DFS_Loop(graph_map)
+for i in range(len(graph_map)):
+    print(graph_map[i].key)
+#print(kosaraju(graph_map))
