@@ -1,68 +1,92 @@
 __author__ = 'ramon'
 
 
-class Node:
-    def __init__(self):
-        self.key = 0
-        self.value = []
-        self.visited = False
-        self.leader = 0
-        self.finishing_time = 0
-
-
-#Global variables
-t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
-s = Node()    # for leaders in 2nd pass. It stands for the current source vertex.
-
-
 def get_input(filename):
-    graph_map = []
+    graph_map = {}
 
     for line in open(filename, 'r').readlines():
         values = [int(val) for val in line.split()]
         key = values.pop(0)
-        if Node in graph_map:
-            print("asd")
-            node.value.extend(values)
+        if key in graph_map:
+            graph_map[key].extend(values)
         else:
-            node = Node()
-            node.key = key
-            node.value = values
-            graph_map.append(node)
-        #print(key, node.value)
+            graph_map[key] = values
+
     return graph_map
 
 
-def DFS(graph_map, node):
-    global t
-    global s
+def DFS(graph_map, start):
+    global t, s, finished_time, visited, counter
 
-    node.visited = True
-    node.leader = s.key
-    while node in graph_map:
-        if node.visited is False:
-            DFS(graph_map, node)
+    visited[start-1] = True
+
+    for child in graph_map[start]:
+        if visited[child-1] is False:
+            DFS(graph_map, child)
+            counter += 1
     t += 1
-    node.finishing_time = t
+    finished_time[start-1] = t
 
 
 def DFS_Loop(graph_map):
-    global s
+    global s, visited, counter
+    count_list = []
 
-    i = max(graph_map.keys())
-    while i >= 1:
-        if graph_map[i].visited is False:
-            s = graph_map[i]
+    i = len(graph_map)  # max(graph_map.keys())
+    for i in reversed(range(1, i+1)):
+        if visited[i-1] is False:
+            s = i
+            counter = 1
             DFS(graph_map, s)
-        i -= 1
+            count_list.append(counter)
+
+    return count_list
+
+
+def transpose_graph(graph_map):
+    # graph_map_rev = {v: k for k, v in graph_map.items()}
+    graph_map_rev = {}
+    for k in graph_map:
+        for kk in graph_map[k]:
+            if not kk in graph_map_rev:
+                graph_map_rev[kk] = []
+            graph_map_rev[kk].extend([k])
+
+    print(graph_map_rev)
+    return graph_map_rev
+
+def get_graph_finish(graph_map_rev):
+    graph_finish={}
+    for k in graph_map_rev:
+        if not finished_time[k-1] in graph_finish:
+            graph_finish[finished_time[k-1]] = []
+        for kk in graph_map_rev[k]:
+            print(k, kk, finished_time[k-1], finished_time[kk-1])
+            graph_finish[finished_time[k-1]].extend([finished_time[kk-1]])
+    return graph_finish
 
 
 def kosaraju(graph_map):
-    graph_map_rev = {v: k for k, v in graph_map.items()}
-    print(graph_map_rev)
+    graph_map_rev = transpose_graph(graph_map)
+    print(DFS_Loop(graph_map_rev))
+    graph_finish = get_graph_finish(graph_map_rev)
+    return DFS_Loop(graph_finish)
+
 
 graph_map = get_input("test1.txt")
+print(graph_map)
+
+#Global variables
+t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
+s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
+counter = 0
+#lenght = int(input("Enter the lenght of the array: "))
+visited = [False]*len(graph_map)  # size of the graph
+finished_time = [0]*len(graph_map)
+
 #DFS_Loop(graph_map)
-for i in range(len(graph_map)):
-    print(graph_map[i].key)
-#print(kosaraju(graph_map))
+#for i in range(0, len(graph_map)):
+#    print(finished_time[i])
+
+print(kosaraju(graph_map))
+
