@@ -1,5 +1,3 @@
-from itertools import product
-
 __author__ = 'ramon'
 
 
@@ -54,7 +52,7 @@ def transpose_graph(graph_map):
                 graph_map_rev[kk] = []
             graph_map_rev[kk].extend([k])
 
-    print(graph_map_rev)
+    #print(graph_map_rev)
     return graph_map_rev
 
 
@@ -67,7 +65,7 @@ def get_graph_finish(graph_map_rev):
             #print(k, kk, finished_time[k-1], finished_time[kk-1])
             graph_finish[finished_time[kk-1]].extend([finished_time[k-1]])
 
-    print(graph_finish)
+    #print(graph_finish)
     return graph_finish
 
 
@@ -83,14 +81,14 @@ def restart_global_variables():
 
 def kosaraju(graph_map):
     graph_map_rev = transpose_graph(graph_map)
-    print(DFS_Loop(graph_map_rev))
+    DFS_Loop(graph_map_rev)
     graph_finish = get_graph_finish(graph_map_rev)
     restart_global_variables()
     return DFS_Loop(graph_finish)
 
 
 graph_map = get_input("test1.txt")
-print(graph_map)
+#print(graph_map)
 
 #Global variables
 t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
@@ -104,5 +102,5 @@ finished_time = [0]*len(graph_map)
 #for i in range(0, len(graph_map)):
 #    print(finished_time[i])
 
-print(kosaraju(graph_map))
-
+gm = kosaraju(graph_map)
+print(gm)
