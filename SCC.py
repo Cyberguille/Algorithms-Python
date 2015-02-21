@@ -1,3 +1,5 @@
+from itertools import product
+
 __author__ = 'ramon'
 
 
@@ -55,21 +57,35 @@ def transpose_graph(graph_map):
     print(graph_map_rev)
     return graph_map_rev
 
+
 def get_graph_finish(graph_map_rev):
-    graph_finish={}
+    graph_finish = {}
     for k in graph_map_rev:
-        if not finished_time[k-1] in graph_finish:
-            graph_finish[finished_time[k-1]] = []
         for kk in graph_map_rev[k]:
-            print(k, kk, finished_time[k-1], finished_time[kk-1])
-            graph_finish[finished_time[k-1]].extend([finished_time[kk-1]])
+            if not finished_time[kk-1] in graph_finish:
+                graph_finish[finished_time[kk-1]] = []
+            #print(k, kk, finished_time[k-1], finished_time[kk-1])
+            graph_finish[finished_time[kk-1]].extend([finished_time[k-1]])
+
+    print(graph_finish)
     return graph_finish
+
+
+def restart_global_variables():
+    global t, s, counter, visited, finished_time
+    t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
+    s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
+    counter = 0
+    #lenght = int(input("Enter the lenght of the array: "))
+    visited = [False]*len(graph_map)  # size of the graph
+    finished_time = [0]*len(graph_map)
 
 
 def kosaraju(graph_map):
     graph_map_rev = transpose_graph(graph_map)
     print(DFS_Loop(graph_map_rev))
     graph_finish = get_graph_finish(graph_map_rev)
+    restart_global_variables()
     return DFS_Loop(graph_finish)
 
 
