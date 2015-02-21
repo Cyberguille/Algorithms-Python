@@ -74,9 +74,9 @@ def restart_global_variables():
     t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
     s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
     counter = 0
-    #lenght = int(input("Enter the lenght of the array: "))
-    visited = [False]*len(graph_map)  # size of the graph
-    finished_time = [0]*len(graph_map)
+    lenght = len(graph_map)
+    visited = [False]*lenght  # size of the graph
+    finished_time = [0]*lenght
 
 
 def kosaraju(graph_map):
@@ -87,20 +87,77 @@ def kosaraju(graph_map):
     return DFS_Loop(graph_finish)
 
 
-graph_map = get_input("test1.txt")
+graph_map = get_input("test3.txt")
 #print(graph_map)
 
 #Global variables
 t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
 s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
 counter = 0
-#lenght = int(input("Enter the lenght of the array: "))
-visited = [False]*len(graph_map)  # size of the graph
-finished_time = [0]*len(graph_map)
-
+lenght = len(graph_map)
+visited = [False]*lenght  # size of the graph
+finished_time = [0]*lenght
 #DFS_Loop(graph_map)
 #for i in range(0, len(graph_map)):
 #    print(finished_time[i])
 
 gm = kosaraju(graph_map)
 print(gm)
+
+
+def partition(A, l, r):
+    #input = A[l ... r]
+    p = A[l]
+    i = l+1
+
+    for j in range(l+1, r):
+        if A[j] > p:    # changing (A[j] < p) with (A[j] > p) to sort in reverse
+            A[i], A[j] = A[j], A[i]
+            i += 1
+
+    A[l], A[i-1] = A[i-1], A[l]
+    return i
+
+
+def choose_pivot_middle(A, l, r):
+    first = l
+
+    if (r-l) % 2 is 0:
+        mid = ((r-l)//2 - 1) + l
+    else:
+        mid = ((r-l)//2) + l
+
+    last = r-1
+
+    B = []
+    B.append(A[first])
+    B.append(A[mid])
+    B.append(A[last])
+
+    if B[2] < B[0]:
+        B[0], B[2] = B[2], B[0]
+    if B[1] < B[0]:
+        B[1], B[0] = B[0], B[1]
+    if B[2] < B[1]:
+        B[2], B[1] = B[1], B[2]
+
+    if A[first] == B[1]:
+        pivotIndex = first
+    elif A[mid] == B[1]:
+        pivotIndex = mid
+    else:
+        pivotIndex = last
+
+    A[l], A[pivotIndex] = A[pivotIndex], A[l]
+    return partition(A, l, r)
+
+
+def quicksort_middle_element(A, l, r):
+    if l < r:
+        q = choose_pivot_middle(A, l, r)
+        quicksort_middle_element(A, l, q-1)
+        quicksort_middle_element(A, q, r)
+        return A
+
+sorted_array = quicksort_middle_element(gm, 0, len(gm))
+print(sorted_array)
