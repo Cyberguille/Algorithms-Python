@@ -6,11 +6,16 @@ def get_input(filename):
 
     for line in open(filename, 'r').readlines():
         values = [int(val) for val in line.split()]
-        key = values.pop(0)
-        if key in graph_map:
-            graph_map[key].extend(values)
-        else:
-            graph_map[key] = values
+        key1 = values.pop(0)
+        key2 = values.pop(0)
+
+        if not key1 in graph_map:
+            graph_map[key1] = []
+
+        if not key2 in graph_map:
+            graph_map[key2] = []
+
+        graph_map[key1].extend([key2])
 
     return graph_map
 
@@ -75,6 +80,7 @@ def restart_global_variables():
     s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
     counter = 0
     lenght = len(graph_map)
+    #lenght = max(graph_map.keys())
     visited = [False]*lenght  # size of the graph
     finished_time = [0]*lenght
 
@@ -87,14 +93,17 @@ def kosaraju(graph_map):
     return DFS_Loop(graph_finish)
 
 
-graph_map = get_input("test3.txt")
-#print(graph_map)
+graph_map = get_input("test4.txt")
+print(graph_map)
 
 #Global variables
 t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
 s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
 counter = 0
 lenght = len(graph_map)
+#lenght = max(graph_map.keys())
+print(lenght)
+print(max(graph_map.keys()))
 visited = [False]*lenght  # size of the graph
 finished_time = [0]*lenght
 #DFS_Loop(graph_map)
