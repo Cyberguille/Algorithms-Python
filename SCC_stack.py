@@ -1,11 +1,5 @@
 __author__ = 'ramon'
 
-import sys
-import threading
-
-threading.stack_size(10000000)
-sys.setrecursionlimit(10 ** 6)
-
 
 def get_input(filename):
     graph_map = {}
@@ -40,15 +34,14 @@ def DFS(graph_map, start):
 
 
 def DFS_Loop(graph_map):
-    global s, visited, counter
+    global visited, counter
     count_list = []
 
     i = len(graph_map)  # max(graph_map.keys())
     for i in reversed(range(1, i+1)):
         if visited[i-1] is False:
-            s = i
             counter = 1
-            DFS(graph_map, s)
+            DFS(graph_map, i)
             count_list.append(counter)
 
     return count_list
@@ -85,9 +78,8 @@ def get_graph_finish(graph_map_rev):
 
 
 def restart_global_variables():
-    global t, s, counter, visited, finished_time
+    global t, counter, visited, finished_time
     t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
-    s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
     counter = 0
     lenght = len(graph_map)
     #lenght = max(graph_map.keys())
@@ -95,40 +87,88 @@ def restart_global_variables():
     finished_time = [0]*lenght
 
 
-def kosaraju(graph_map, q):
+def kosaraju(graph_map):
     graph_map_rev = transpose_graph(graph_map)
     DFS_Loop(graph_map_rev)
     graph_finish = get_graph_finish(graph_map_rev)
     restart_global_variables()
-    q += DFS_Loop(graph_finish)
+    return DFS_Loop(graph_finish)
 
 
-graph_map = get_input("SCC.txt")
+graph_map = get_input("test1.txt")
 #print(graph_map)
 
 #Global variables
 t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
-s = 0    # for leaders in 2nd pass. It stands for the current source vertex.
 counter = 0
 lenght = len(graph_map)
 #lenght = max(graph_map.keys())
 #print(lenght)
 #print(max(graph_map.keys()))
 visited = [False]*lenght  # size of the graph
+state = []*lenght
 finished_time = [0]*lenght
 #DFS_Loop(graph_map)
 #for i in range(0, len(graph_map)):
 #    print(finished_time[i])
 
-#gm = kosaraju(graph_map)
-#gm.reverse()
+gm = kosaraju(graph_map)
 #print(gm)
 
-q = [0]*lenght
-a = threading.Thread(target=kosaraju, args=(graph_map, q,))
 
-a.start()
-a.join()
+def partition(A, l, r):
+    #input = A[l ... r]
+    p = A[l]
+    i = l+1
 
-q.reverse()
-print(q)
+    for j in range(l+1, r):
+        if A[j] > p:    # changing (A[j] < p) with (A[j] > p) to sort in reverse
+            A[i], A[j] = A[j], A[i]
+            i += 1
+
+    A[l], A[i-1] = A[i-1], A[l]
+    return i
+
+
+def choose_pivot_middle(A, l, r):
+    first = l
+
+    if (r-l) % 2 is 0:
+        mid = ((r-l)//2 - 1) + l
+    else:
+        mid = ((r-l)//2) + l
+
+    last = r-1
+
+    B = []
+    B.append(A[first])
+    B.append(A[mid])
+    B.append(A[last])
+
+    if B[2] < B[0]:
+        B[0], B[2] = B[2], B[0]
+    if B[1] < B[0]:
+        B[1], B[0] = B[0], B[1]
+    if B[2] < B[1]:
+        B[2], B[1] = B[1], B[2]
+
+    if A[first] == B[1]:
+        pivotIndex = first
+    elif A[mid] == B[1]:
+        pivotIndex = mid
+    else:
+        pivotIndex = last
+
+    A[l], A[pivotIndex] = A[pivotIndex], A[l]
+    return partition(A, l, r)
+
+
+def quicksort_middle_element(A, l, r):
+    if l < r:
+        q = choose_pivot_middle(A, l, r)
+        quicksort_middle_element(A, l, q-1)
+        quicksort_middle_element(A, q, r)
+        return A
+
+sorted_array = quicksort_middle_element(gm, 0, len(gm))
+print(sorted_array)
