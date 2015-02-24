@@ -24,11 +24,18 @@ def DFS(graph_map, start):
     global t, finished_time, visited, counter
 
     visited[start-1] = True
+    stack = [iter(range(1, len(graph_map)))]
 
-    for child in graph_map[start]:
-        if visited[child-1] is False:
-            DFS(graph_map, child)
-            counter += 1
+    while stack:
+        try:
+            child = next(stack[0])
+            print(child)
+            if visited[child-1] is False:
+                stack.append(iter(graph_map[child]))
+                counter += 1
+                visited[child-1] = True
+        except StopIteration:
+            stack.pop()
     t += 1
     finished_time[start-1] = t
 
@@ -37,12 +44,13 @@ def DFS_Loop(graph_map):
     global visited, counter
     count_list = []
 
-    i = len(graph_map)  # max(graph_map.keys())
-    for i in reversed(range(1, i+1)):
+    length = len(graph_map)  # max(graph_map.keys())
+    for i in reversed(range(1, length+1)):
         if visited[i-1] is False:
             counter = 1
             DFS(graph_map, i)
             count_list.append(counter)
+            print(count_list)
 
     return count_list
 
@@ -78,13 +86,13 @@ def get_graph_finish(graph_map_rev):
 
 
 def restart_global_variables():
-    global t, counter, visited, finished_time
+    global t, s, counter, visited, finished_time
     t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
     counter = 0
-    lenght = len(graph_map)
-    #lenght = max(graph_map.keys())
-    visited = [False]*lenght  # size of the graph
-    finished_time = [0]*lenght
+    length = len(graph_map)
+    #length = max(graph_map.keys())
+    visited = [False]*length  # size of the graph
+    finished_time = [0]*length
 
 
 def kosaraju(graph_map):
@@ -95,80 +103,24 @@ def kosaraju(graph_map):
     return DFS_Loop(graph_finish)
 
 
-graph_map = get_input("test1.txt")
+graph_map = get_input("test3.txt")
 #print(graph_map)
 
 #Global variables
 t = 0   # for finishing times in 1st pass. It stands for the # of nodes processed so far.
 counter = 0
-lenght = len(graph_map)
-#lenght = max(graph_map.keys())
-#print(lenght)
+length = len(graph_map)
+#length = max(graph_map.keys())
+#print(length)
 #print(max(graph_map.keys()))
-visited = [False]*lenght  # size of the graph
-state = []*lenght
-finished_time = [0]*lenght
+visited = [False]*length  # size of the graph
+finished_time = [0]*length
 #DFS_Loop(graph_map)
 #for i in range(0, len(graph_map)):
 #    print(finished_time[i])
 
 gm = kosaraju(graph_map)
-#print(gm)
+gm.reverse()
+print(gm)
 
 
-def partition(A, l, r):
-    #input = A[l ... r]
-    p = A[l]
-    i = l+1
-
-    for j in range(l+1, r):
-        if A[j] > p:    # changing (A[j] < p) with (A[j] > p) to sort in reverse
-            A[i], A[j] = A[j], A[i]
-            i += 1
-
-    A[l], A[i-1] = A[i-1], A[l]
-    return i
-
-
-def choose_pivot_middle(A, l, r):
-    first = l
-
-    if (r-l) % 2 is 0:
-        mid = ((r-l)//2 - 1) + l
-    else:
-        mid = ((r-l)//2) + l
-
-    last = r-1
-
-    B = []
-    B.append(A[first])
-    B.append(A[mid])
-    B.append(A[last])
-
-    if B[2] < B[0]:
-        B[0], B[2] = B[2], B[0]
-    if B[1] < B[0]:
-        B[1], B[0] = B[0], B[1]
-    if B[2] < B[1]:
-        B[2], B[1] = B[1], B[2]
-
-    if A[first] == B[1]:
-        pivotIndex = first
-    elif A[mid] == B[1]:
-        pivotIndex = mid
-    else:
-        pivotIndex = last
-
-    A[l], A[pivotIndex] = A[pivotIndex], A[l]
-    return partition(A, l, r)
-
-
-def quicksort_middle_element(A, l, r):
-    if l < r:
-        q = choose_pivot_middle(A, l, r)
-        quicksort_middle_element(A, l, q-1)
-        quicksort_middle_element(A, q, r)
-        return A
-
-sorted_array = quicksort_middle_element(gm, 0, len(gm))
-print(sorted_array)
