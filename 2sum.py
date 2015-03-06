@@ -1,5 +1,7 @@
 __author__ = 'Ramon'
 
+import timeit
+
 
 def get_input(filename):
     array = []
@@ -13,55 +15,147 @@ def get_input(filename):
 
 def sum2(array, T):
     counter = 0
-    mem = list()
+
     for t in T:
         for x in array:
-            if not x in mem:
-                mem.append(x)
-                if (t-x) in array and (t-x != x):
-                    print(t-x, '+', x, '=', t)
-                    counter += 1
-                    break
-        mem.clear()
+            if (t-x) in array and (t-x != x):
+                #print(t-x, '+', x, '=', t)
+                counter += 1
+                break
 
     return counter
 
-array = [1, 1, 2, 3, 4, 6, 8]
-H = list()
 
-for i in range(0, 20):
-    H.append(i)
+def sum2Hash(array, T):
+    counter = 0
+    H = dict()
 
-print(sum2(array, H))
-#-----------------------------------------------------------------------------------
+    for i in range(0, len(array)):
+        H[i+1] = array[i]
 
+    print(array)
+    print(H)
 
-def f(v, i, S, memo):
-    if i >= len(v): return 1 if S == 0 else 0
-    if (i, S) not in memo:  # <-- Check if value has not been calculated.
-        count = f(v, i + 1, S, memo)
-        count += f(v, i + 1, S - v[i], memo)
-        memo[(i, S)] = count  # <-- Memoize calculated result.
-    return memo[(i, S)]     # <-- Return memorized value.
+    for t in T:
+        for x in array:
+            if (t-x) in H and (t-x != x):
+                print(t-x, '+', x, '=', t)
+                counter += 1
+                break
 
-v = [4, 3, 2, 1]
-sum = 5
-memo = dict()
-#print(f(v, 0, sum, memo))
-#-----------------------------------------------------------------------------------
-
-import bisect
+    return counter
 
 
-def two_sum(array):
-    """Returns the numbers from [-WIDTH, WIDTH] that can be obtained by
-    summing up any two elements in 'array'."""
+def binarySearch(alist, item):
+    first = 0
+    last = len(alist)-1
+    found = False
 
-    WIDTH = 10000
-    out = set()
-    for i in array:
-        lower = bisect.bisect_left(array, -WIDTH - i)
-        upper = bisect.bisect_right(array, WIDTH - i)
-        out |= set([i + j for j in array[lower:upper]])
-    return out
+    while first <= last and not found:
+        midpoint = (first + last)//2
+        if alist[midpoint] == item:
+            found = True
+        else:
+            if item < alist[midpoint]:
+                last = midpoint-1
+            else:
+                first = midpoint+1
 
+    return found
+
+
+def binarySearchRecursive(alist, item):
+    if len(alist) == 0:
+        return False
+    else:
+        midpoint = len(alist)//2
+        if alist[midpoint] == item:
+            return True
+        else:
+            if item < alist[midpoint]:
+                return binarySearch(alist[:midpoint], item)
+            else:
+                return binarySearch(alist[midpoint+1:], item)
+
+
+def sum2b(array, T):
+    counter = 0
+
+    for t in T:
+        for x in array:
+            if t-x != x:
+                if binarySearchRecursive(array, t-x):
+                    #print(t-x, '+', x, '=', t)
+                    counter += 1
+                    break
+
+    return counter
+
+
+def create_list_consecutive_numbers(width):
+    T = list()
+
+    for i in range(-width, width+1):
+        T.append(i)
+
+    return T
+
+
+def test1():
+    T = create_list_consecutive_numbers(10000)
+    array1 = [1, 1, 2, 3, 4, 6, 8]  # test Answer = 11
+    array1a = [8, 1, 4, 3, 6, 2, 1]  # test Answer = 11
+    print(sum2(array1a, T))
+
+
+def test1b():
+    T = create_list_consecutive_numbers(10000)
+    array1 = [1, 1, 2, 3, 4, 6, 8]  # test Answer = 11
+    array1a = [8, 1, 4, 3, 6, 2, 1]  # test Answer = 11
+    array1a.sort()
+    print(sum2b(array1a, T))
+
+
+def test2():
+    T = create_list_consecutive_numbers(10000)
+    array2 = [-10001, 1, 2, -10001]     # test Answer = 3
+    print(sum2(array2, T))
+
+
+def test2a():
+    T = create_list_consecutive_numbers(10000)
+    array2 = [-10001, 1, 2, -10001]     # test Answer = 3
+    array2.sort()
+    print(sum2(array2, T))
+
+
+def test3():
+    T = create_list_consecutive_numbers(10000)
+    array3 = [-10001, 1, 2, -10001, 9999]     # test Answer = 5
+    print(sum2(array3, T))
+
+
+def main():
+    T = create_list_consecutive_numbers(10000)
+    array = get_input("2sum.txt")
+    array.sort()
+    print(sum2(array, T))
+
+
+# result is the time (in seconds) to run the whole loop
+result = timeit.timeit('main()', setup='from __main__ import main', number=1)
+print('total time main=', result*1000, 'ms')
+
+# result is the time (in seconds) to run the whole loop
+#result = timeit.timeit('test2()', setup='from __main__ import test2', number=1)
+#print('total time test2 =', result*1000, 'ms')
+# result is the time (in seconds) to run the whole loop
+#result = timeit.timeit('test2a()', setup='from __main__ import test2a', number=1)
+#print('total time test2a =', result*1000, 'ms')
+
+# result is the time (in seconds) to run the whole loop
+#result = timeit.timeit('test1()', setup='from __main__ import test1', number=1)
+#print('total time test1=', result*1000, 'ms')
+# result is the time (in seconds) to run the whole loop
+#result = timeit.timeit('test1b()', setup='from __main__ import test1b', number=1)
+#print('total time test1b=', result*1000, 'ms')
