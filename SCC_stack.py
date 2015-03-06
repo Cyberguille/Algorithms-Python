@@ -24,7 +24,7 @@ def DFS(graph_map, start):
     global t, finished_time, visited, counter
 
     visited[start-1] = True
-    stack = [iter(range(1, len(graph_map)))]
+    stack = [iter(range(len(graph_map), 0, -1))]
 
     while stack:
         try:
@@ -36,23 +36,10 @@ def DFS(graph_map, start):
                 visited[child-1] = True
         except StopIteration:
             stack.pop()
-    t += 1
-    finished_time[start-1] = t
+        t += 1
+        finished_time[start-1] = t
 
-
-def DFS_Loop(graph_map):
-    global visited, counter
-    count_list = []
-
-    length = len(graph_map)  # max(graph_map.keys())
-    for i in reversed(range(1, length+1)):
-        if visited[i-1] is False:
-            counter = 1
-            DFS(graph_map, i)
-            count_list.append(counter)
-            print(count_list)
-
-    return count_list
+    return finished_time
 
 
 def transpose_graph(graph_map):
@@ -97,10 +84,10 @@ def restart_global_variables():
 
 def kosaraju(graph_map):
     graph_map_rev = transpose_graph(graph_map)
-    DFS_Loop(graph_map_rev)
+    DFS(graph_map_rev, len(graph_map))
     graph_finish = get_graph_finish(graph_map_rev)
     restart_global_variables()
-    return DFS_Loop(graph_finish)
+    return DFS(graph_finish, len(graph_finish))
 
 
 graph_map = get_input("test3.txt")
