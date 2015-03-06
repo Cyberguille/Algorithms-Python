@@ -31,15 +31,15 @@ def sum2Hash(array, T):
     H = dict()
 
     for i in range(0, len(array)):
-        H[i+1] = array[i]
+        H[array[i]] = array[i]
 
-    print(array)
-    print(H)
+    #print(array)
+    #print(H)
 
     for t in T:
         for x in array:
             if (t-x) in H and (t-x != x):
-                print(t-x, '+', x, '=', t)
+                #print(t-x, '+', x, '=', t)
                 counter += 1
                 break
 
@@ -83,11 +83,10 @@ def sum2b(array, T):
 
     for t in T:
         for x in array:
-            if t-x != x:
-                if binarySearchRecursive(array, t-x):
-                    #print(t-x, '+', x, '=', t)
-                    counter += 1
-                    break
+            if binarySearchRecursive(array, t-x) and (t-x != x):
+                #print(t-x, '+', x, '=', t)
+                counter += 1
+                break
 
     return counter
 
@@ -138,8 +137,8 @@ def test3():
 def main():
     T = create_list_consecutive_numbers(10000)
     array = get_input("2sum.txt")
-    array.sort()
-    print(sum2(array, T))
+    #array.sort()
+    print(sum2Hash(array, T))
 
 
 # result is the time (in seconds) to run the whole loop
