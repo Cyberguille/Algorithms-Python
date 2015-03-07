@@ -61,17 +61,18 @@ class BinarySearchTree:
 
     def search(self, key):
         seeker = self.root    # start at the root node
-        parent = None
-        while (seeker is not None) and (seeker.key != key):
-            parent = seeker
-            if key < seeker.key:
-                seeker = seeker.left
-            else:
-                seeker = seeker.right
+        parent = None   # since we are on root
+        return self.traverse(seeker, key, parent)
+
+    def traverse(self, seeker, key, parent):
         if seeker is None:
-            return parent
-        else:
+            return parent   # in order to insert a new node
+        if seeker.key == key:
             return seeker
+        if key < seeker.key:
+            return self.traverse(seeker.left, key, seeker)
+        else:
+            return self.traverse(seeker.right, key, seeker)
 
 
 def test():
