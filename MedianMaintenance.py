@@ -23,6 +23,7 @@ def median(array):
     h_low.insert(med[0])
 
     for i in array:
+        # trying to keep both Heaps balanced
         if i < h_low[0]:
             h_low.insert(i)
         else:

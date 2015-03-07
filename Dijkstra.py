@@ -59,8 +59,7 @@ def dijkstra(graph_map):
                 D[v] = D[w] + graph_map[new_node_position].w[j]
                 P[v] = w
                 print('D=', D, 'P=', P)
-
-
+    #TODO: terminar dikstra
 
 graph_map = get_input("disktra_test1.txt")
 for i in graph_map:
