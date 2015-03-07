@@ -5,21 +5,30 @@ Heap property: at every node X, key[X] <= (if min) or >= (if max) all keys of X'
 '''
 
 
-class heap():
-    def __init__(self, array, hmax=False):
+class Heap():
+    # running-time = O(n*log(n))
+    def __init__(self, array, h_max=False):
         self.tree = list()
-        self.max = hmax
+        self.max = h_max
         for i in array:
             self.insert(i)
 
     def __str__(self):
         return str(self.tree)
 
+    def __getitem__(self, item):
+        return self.tree[item]
+
+    def __sizeof__(self):
+        return len(self.tree)
+
+    # running-time = O(log(n))
     def insert(self, value):
         self.tree.append(value)
         value_index = len(self.tree)-1
         self.bubble_up(value_index)
 
+    # running-time = O(log(n))
     def bubble_up(self, value_index):
         if value_index > 0:
             parent_index = (value_index-1)//2
@@ -31,6 +40,7 @@ class heap():
                 self.tree[value_index], self.tree[parent_index] = self.tree[parent_index], self.tree[value_index]
                 self.bubble_up(parent_index)
 
+    # running-time = O(log(n))
     def bubble_down(self, value_index):
         child_index1 = (value_index+1)*2 - 1
         child_index2 = (value_index+1)*2
@@ -49,6 +59,7 @@ class heap():
             self.tree[value_index], self.tree[child_index1] = self.tree[child_index1], self.tree[value_index]
             self.bubble_down(child_index1)
 
+    # running-time = O(log(n))
     def extract(self):
         self.tree[0], self.tree[-1] = self.tree[-1], self.tree[0]
         root = self.tree.pop()
@@ -58,7 +69,7 @@ class heap():
 
 def test():
     c = [4, 4, 8, 9, 4, 12, 9, 11, 13]
-    h = heap(c, True)
+    h = Heap(c, True)
     print(h)
     h.insert(7)
     print(h)
@@ -69,5 +80,5 @@ def test():
     print(h.extract())
     print(h)
 
-if __name__ == '__main__':
-    test()
+#if __name__ == '__main__':
+    #test()
