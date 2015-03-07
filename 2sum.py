@@ -136,7 +136,7 @@ def test3():
 
 def main():
     T = create_list_consecutive_numbers(10000)
-    array = get_input("2sum.txt")
+    array = get_input("2sumtest1.txt")
     #array.sort()
     print(sum2Hash(array, T))
 
