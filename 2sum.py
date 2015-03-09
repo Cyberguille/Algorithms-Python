@@ -1,6 +1,7 @@
 __author__ = 'Ramon'
 
 import timeit
+import BinarySearchTree as BST
 
 
 def get_input(filename):
@@ -140,6 +141,29 @@ def main():
     #array.sort()
     print(sum2Hash(array, T))
 
+
+def sum2_bst(bst, T, array):
+    counter = 0
+
+    for t in T:
+        for x in array:
+            if bst.search(t-x) is not None and (t-x != x):
+                #print(t-x, '+', x, '=', t)
+                counter += 1
+                break
+
+    return counter
+
+
+def bst_main():
+    T = create_list_consecutive_numbers(10000)
+    array = get_input("2sumtest1.txt")
+    bst = BST.BinarySearchTree(array)
+    print(sum2_bst(bst, T, array))
+
+# result is the time (in seconds) to run the whole loop
+#result = timeit.timeit('bst_main()', setup='from __main__ import bst_main', number=1)
+#print('total time bst_main=', result*1000, 'ms')
 
 # result is the time (in seconds) to run the whole loop
 result = timeit.timeit('main()', setup='from __main__ import main', number=1)

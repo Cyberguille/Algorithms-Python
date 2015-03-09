@@ -49,39 +49,134 @@ class BinarySearchTree:
             print_array.append(str(i))
         return str(print_array)
 
+    # worst case running time = O(height)
     def insert(self, key):
         node = Node(key)
-        parent = self.search(node.key)
-        if node.key < parent.key:
-            parent.left = node
-        else:
-            parent.right = node
-        node.parent = parent
-        self.tree.append(node)
+        seeker = self.root    # start at the root node
+        parent = None
+        while (seeker is not None) and (seeker.key != key):
+            parent = seeker
+            if key < seeker.key:
+                seeker = seeker.left
+            else:
+                seeker = seeker.right
+        if seeker is None:
+            if node.key < parent.key:
+                parent.left = node
+            else:
+                parent.right = node
+            node.parent = parent
+            self.tree.append(node)
 
+    def delete(self, key):
+        seeker = self.search(key)
+        parent = seeker.parent
+        # if the node exists
+        if seeker is not None:
+            # difficult case (seeker has 2 children)
+            if seeker.left is not None and seeker.right is not None:
+                pred = self.predecessor(seeker)
+                print(seeker, pred)
+                self.xchange(seeker, pred)
+                print(seeker, pred)
+            # medium case (seeker has 1 child)
+            if seeker.left is not None or seeker.right is not None:
+                if seeker.left is not None:
+                    seeker, seeker.left = seeker.left, seeker
+                else:
+                    seeker, seeker.right = seeker.right, seeker
+            # at this point it all arrives to the easy case (seeker has no children)
+            if seeker == parent.right:
+                parent.right = None
+            else:
+                parent.left = None
+            self.tree.remove(seeker)
+
+    def xchange(self, node1, node2):
+        node1, node2 = node2, node1
+        node1.key, node2.key = node2.key, node1.key
+        node1.parent, node2.parent = node2.parent, node1.parent
+        node1.left, node2.left = node2.left, node1.left
+        node1.right, node2.right = node2.right, node1.right
+
+    # worst case running time = O(height)
     def search(self, key):
         seeker = self.root    # start at the root node
-        parent = None   # since we are on root
-        return self.traverse(seeker, key, parent)
+        while (seeker is not None) and (seeker.key != key):
+            if key < seeker.key:
+                seeker = seeker.left
+            else:
+                seeker = seeker.right
+        return seeker
 
-    def traverse(self, seeker, key, parent):
-        if seeker is None:
-            return parent   # in order to insert a new node
-        if seeker.key == key:
-            return seeker
-        if key < seeker.key:
-            return self.traverse(seeker.left, key, seeker)
-        else:
-            return self.traverse(seeker.right, key, seeker)
+    def min(self):
+        return self.min_subtree(self.root)
+
+    def max(self):
+        return self.max_subtree(self.root)
+
+    # worst case running time = O(height)
+    def min_subtree(self, subtree_root):
+        seeker = subtree_root    # start at the root node of the subtree
+        while seeker.left is not None:
+            seeker = seeker.left
+        return seeker
+
+    # worst case running time = O(height)
+    def max_subtree(self, subtree_root):
+        seeker = subtree_root    # start at the root node of the subtree
+        while seeker.right is not None:
+            seeker = seeker.right
+        return seeker
+
+    # running time = O(n)
+    def in_order_traversal(self, start_node):
+        if start_node is not None:
+            self.in_order_traversal(start_node.left)
+            print(start_node.key)
+            self.in_order_traversal(start_node.right)
+
+    # worst case running time = O(height)
+    def successor(self, node):
+        if node.right is not None:
+            return self.min_subtree(node.right)
+        seeker = node.parent
+        # while it hasn't arrived to the root and it hasn't turned right
+        # (if it's the right child of parent then it's key is bigger than parent's)
+        while seeker is not None and node == seeker.right:
+            node = seeker
+            seeker = seeker.parent
+        return seeker
+
+    # worst case running time = O(height)
+    def predecessor(self, node):
+        if node.left is not None:
+            return self.max_subtree(node.left)
+        seeker = node.parent
+        # while it hasn't arrived to the root and it hasn't turned left
+        # (if it's the left child of parent then it's key is lower than parent's)
+        while seeker is not None and node == seeker.left:
+            node = seeker
+            seeker = seeker.left
+        return seeker
 
 
 def test():
-    array = [3,1,5,2,4,6]
+    array = [3, 1, 5, 2, 4, 6]
     bst = BinarySearchTree(array)
     print(bst)
     bst.insert(7)
     print(bst)
-    print(bst.search(5))
+    seeker = bst.search(5)
+    print(seeker)
+    print(bst.min())
+    print(bst.max())
+    bst.in_order_traversal(bst.search(3))
+    print(bst.min_subtree(bst.search(5)))
+    print(bst.successor(bst.search(2)))
+    print(bst.predecessor(bst.search(5)))
+    bst.delete(5)
+    print(bst)
 
 
 if __name__ == '__main__':
